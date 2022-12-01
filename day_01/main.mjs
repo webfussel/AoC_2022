@@ -2,17 +2,12 @@ import { readFile } from 'fs'
 
 const split = '\r\n'
 
-readFile('./input.txt', 'utf-8', (err, content) => {
-    if (err) {
-        console.error(err)
-        return
-    }
-
-    const formatElves = content.split(split + split)
-    const [first, second, third] = formatElves
+readFile('./input.txt', 'utf-8', (_, content) => {
+    const [first, second, third] = content
+                                .split(split + split)
                                 .map(e => e.split(split)
                                     .map(i => +i)
-                                    .reduce((sum, curr) => sum+curr))
+                                    .reduce((s, c)=>s+c), 0)
                                 .sort((a,b)=>b-a)
 
     console.log('first: ', first)
