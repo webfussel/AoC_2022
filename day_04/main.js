@@ -10,15 +10,17 @@ const arrayFromRange = (start, end) => {
     return arr
 }
 
+const splitSectionRanges = content => content
+    .split(split)
+    .map(range => range
+        .split(',')
+        .map(section => section
+            .split('-')
+            .map(n => +n)))
+
 const part_one = () => {
     readFile('./input.txt', 'utf-8', (_, content) => {
-        const pairs = content
-            .split(split)
-            .map(range => range
-                .split(',')
-                .map(section => section
-                    .split('-')
-                    .map(n => +n)))
+        const pairs = splitSectionRanges(content)
 
         const contained = pairs.reduce((sumOfSames, [first, second]) => {
             const firstInSecond = first[0] >= second[0] && first[1] <= second[1]
@@ -35,13 +37,7 @@ const part_one = () => {
 
 const part_two = () => {
     readFile('./input.txt', 'utf-8', (_, content) => {
-        const pairs = content
-            .split(split)
-            .map(range => range
-                .split(',')
-                .map(section => section
-                    .split('-')
-                    .map(n => +n)))
+        const pairs = splitSectionRanges(content)
 
         const overlaps = pairs.reduce((sumOfOverlaps, [first, second]) => {
             const firstRange = arrayFromRange(first[0], first[1])
