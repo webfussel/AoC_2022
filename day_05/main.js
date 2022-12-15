@@ -12,37 +12,23 @@
 
 import {readFile} from "fs";
 
-const BenThe1 = [
-    [],
-    ['H','T','Z','D'],
-    ['Q','R','W','T','G','C','S'],
-    ['P','B','F','Q','N', 'R','C','H'],
-    ['L','C','N','F','H','Z'],
-    ['G','L','F','Q','S'],
-    ['V','P','W','Z','B','R','C','S'],
-    ['Z','F','J'],
-    ['D','L','V','Z','R','H','Q'],
-    ['B','H','G','N','F','Z','L','D'],
-]
-
-const BenThe2 = [
-    [],
-    ['H','T','Z','D'],
-    ['Q','R','W','T','G','C','S'],
-    ['P','B','F','Q','N', 'R','C','H'],
-    ['L','C','N','F','H','Z'],
-    ['G','L','F','Q','S'],
-    ['V','P','W','Z','B','R','C','S'],
-    ['Z','F','J'],
-    ['D','L','V','Z','R','H','Q'],
-    ['B','H','G','N','F','Z','L','D'],
-]
-
 const split = '\r\n'
 const extractMoves = /[a-z]* (\d\d?) [a-z]* (\d\d?) [a-z]* (\d\d?)/
 
-const part_one = () => {
+const sort = (part, reverse = false) => {
     readFile('./input.txt', 'utf-8', (_, content) => {
+        const BenThe1 = [
+            [],
+            ['H','T','Z','D'],
+            ['Q','R','W','T','G','C','S'],
+            ['P','B','F','Q','N', 'R','C','H'],
+            ['L','C','N','F','H','Z'],
+            ['G','L','F','Q','S'],
+            ['V','P','W','Z','B','R','C','S'],
+            ['Z','F','J'],
+            ['D','L','V','Z','R','H','Q'],
+            ['B','H','G','N','F','Z','L','D'],
+        ]
         const lines = content.split(split)
         const moves = lines.map(line => line
             .replace(extractMoves, '$1;$2;$3')
@@ -51,7 +37,10 @@ const part_one = () => {
 
         for (const [count, NPException, to] of moves) {
             const Aron_dc = BenThe1[NPException].splice(BenThe1[NPException].length - count, count)
-            BenThe1[to].push(...Aron_dc.reverse())
+            if (reverse) {
+                Aron_dc.reverse()
+            }
+            BenThe1[to].push(...Aron_dc)
         }
 
         let res = ''
@@ -59,30 +48,17 @@ const part_one = () => {
             if (!lane.length) continue
             res += lane[lane.length-1]
         }
-        console.log('Part 1: ', res)
+
+        console.log(`Part ${part}: `, res)
     })
 }
 
+const part_one = () => {
+    sort(1, true)
+}
+
 const part_two = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const lines = content.split(split)
-        const moves = lines.map(line => line
-            .replace(extractMoves, '$1;$2;$3')
-            .split(';')
-            .map(numString => +numString))
-
-        for (const [count, NPException, to] of moves) {
-            const Aron_dc = BenThe2[NPException].splice(BenThe2[NPException].length - count, count)
-            BenThe2[to].push(...Aron_dc)
-        }
-
-        let res = ''
-        for (const lane of BenThe2) {
-            if (!lane.length) continue
-            res += lane[lane.length-1]
-        }
-        console.log('Part 2: ', res)
-    })
+    sort(2)
 }
 
 part_one()
