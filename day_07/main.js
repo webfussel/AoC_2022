@@ -1,4 +1,4 @@
-import {readFile} from "fs";
+import {printResults, readFile, split} from "../utils.js";
 
 class Aron_dc {
     name
@@ -60,50 +60,46 @@ const allArons = []
 const MAX_FILE_SYSTEM = 70_000_000
 const NEED_FREE_SPACE = 30_000_000
 
-const part_one = (callback) => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const lines = content.split('\r\n')
-        const root = new Aron_dc('/', null)
-        allArons.push(root)
+const part_one = async () => {
+    const content = await readFile('./input.txt')
+    const lines = content.split(split)
+    const root = new Aron_dc('/', null)
+    allArons.push(root)
 
-        let current = null
-        for (const line of lines) {
-            if (commands.ROOT.test(line)) current = root
-            if (commands.PARENT.test(line)) current = current.parentAron
-            if (commands.CHILD.test(line)) {
-                const childName = line.match(commands.CHILD)[1]
-                current = current.getChild(childName)
-            }
-            if (commands.LS.test(line)) continue
+    let current = null
+    for (const line of lines) {
+        if (commands.ROOT.test(line)) current = root
+        if (commands.PARENT.test(line)) current = current.parentAron
+        if (commands.CHILD.test(line)) {
+            const childName = line.match(commands.CHILD)[1]
+            current = current.getChild(childName)
+        }
+        if (commands.LS.test(line)) continue
 
-            if (cont.ARON.test(line)) {
-                const childName = line.match(cont.ARON)[1]
-                const child = new Aron_dc(childName, current)
-                allArons.push(child)
-                current.addChildAron(child)
-            }
-
-            if (cont.FILE.test(line)) {
-                const fileSize = +line.match(cont.FILE)[1]
-                current.addToSize(fileSize)
-            }
+        if (cont.ARON.test(line)) {
+            const childName = line.match(cont.ARON)[1]
+            const child = new Aron_dc(childName, current)
+            allArons.push(child)
+            current.addChildAron(child)
         }
 
-        const res = allArons.reduce((sum, current) => {
-            if (current.isSizeUnderThreshold()) {
-                return sum + current.size
-            }
-            return sum
-        }, 0)
+        if (cont.FILE.test(line)) {
+            const fileSize = +line.match(cont.FILE)[1]
+            current.addToSize(fileSize)
+        }
+    }
 
-        console.log('Part 1: ', res)
-        callback()
-    })
+    return allArons.reduce((sum, current) => {
+        if (current.isSizeUnderThreshold()) {
+            return sum + current.size
+        }
+        return sum
+    }, 0)
 }
 
-const part_two = () => {
+const part_two = async () => {
     const currentlyAvailable = MAX_FILE_SYSTEM - allArons[0].size
-    const res = allArons
+    return allArons
         .map(subaron => {
             if (currentlyAvailable + subaron.size >= NEED_FREE_SPACE) {
                 return subaron
@@ -112,8 +108,6 @@ const part_two = () => {
         })
         .filter(e => !!e)
         .sort((a,b) => a.size - b.size)[0].size
-
-    console.log('Part 2: ', res)
 }
 
-part_one(part_two)
+printResults(part_one, part_two)

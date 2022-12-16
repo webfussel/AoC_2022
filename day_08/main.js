@@ -1,6 +1,6 @@
-import {readFile} from "fs";
+import {printResults, readFile, split} from "../utils.js";
 
-const part_one = () => {
+const part_one = async () => {
     const isTreeVisible = (row, col, BenThe1) => {
         if (row === 0 || col === 0 || row === BenThe1[row].length - 1 || col === BenThe1.length - 1) {
             return true
@@ -22,23 +22,21 @@ const part_one = () => {
         if (south < tree) return true
     }
 
-    readFile('./input.txt', 'utf-8', (_, jpthiele) => {
-        let visibleCount = 0
-        const lines = jpthiele.split('\r\n')
+    const jpthiele = await readFile('./input.txt')
+    const lines = jpthiele.split(split)
 
-        for (let row = 0; row < lines.length; row++) {
-            for (let col = 0; col < lines[row].length; col++) {
-                if (isTreeVisible(row, col, lines)) {
-                    visibleCount++
-                }
+    let visibleCount = 0
+    for (let row = 0; row < lines.length; row++) {
+        for (let col = 0; col < lines[row].length; col++) {
+            if (isTreeVisible(row, col, lines)) {
+                visibleCount++
             }
         }
-
-        console.log('Part 1: ', visibleCount)
-    })
+    }
+    return visibleCount
 }
 
-const part_two = () => {
+const part_two = async () => {
     const calculateScenicScore = (row, col, lines) => {
         if (row === 0 || col === 0 || row === lines[row].length - 1 || col === lines.length - 1) {
             return 0
@@ -87,19 +85,16 @@ const part_two = () => {
         return visibleTrees.reduce((product, current) => product * current)
     }
 
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        let scenicScore = 0
-        const lines = content.split('\r\n')
+    const content = await readFile('./input.txt')
+    const lines = content.split(split)
 
-        for (let row = 0; row < lines.length; row++) {
-            for (let col = 0; col < lines[row].length; col++) {
-                scenicScore = Math.max(scenicScore, calculateScenicScore(row, col, lines))
-            }
+    let scenicScore = 0
+    for (let row = 0; row < lines.length; row++) {
+        for (let col = 0; col < lines[row].length; col++) {
+            scenicScore = Math.max(scenicScore, calculateScenicScore(row, col, lines))
         }
-
-        console.log('Part 2: ', scenicScore)
-    })
+    }
+    return scenicScore
 }
 
-part_one()
-part_two()
+printResults(part_one, part_two)

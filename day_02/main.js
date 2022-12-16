@@ -1,4 +1,4 @@
-import {readFile} from "fs";
+import {printResults, readFile, split} from '../utils.js'
 
 const moves = {
     rock : {
@@ -36,49 +36,37 @@ const scores = {
     }
 }
 
-const split = '\r\n'
+const part_one = async () => {
+    return (await readFile('./input.txt'))
+        .split(split)
+        .reduce((res, curr) => {
+            const [enemy, you] = curr.split(' ')
+            const enemyTool = Object.values(moves).find(tool => tool.chars.includes(enemy))
+            const yourTool = Object.values(moves).find(tool => tool.chars.includes(you))
 
-const part_one = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const score = content
-            .split(split)
-            .reduce((res, curr) => {
-                const [enemy, you] = curr.split(' ')
-                const enemyTool = Object.values(moves).find(tool => tool.chars.includes(enemy))
-                const yourTool = Object.values(moves).find(tool => tool.chars.includes(you))
-
-                if (enemyTool.kills.includes(you)) return res + yourTool.score + scores.lose.score
-                if (yourTool.kills.includes(enemy)) return res + yourTool.score + scores.win.score
-                return res + yourTool.score + scores.draw.score
-            }, 0)
-
-        console.log('Part one: ', score)
-    })
+            if (enemyTool.kills.includes(you)) return res + yourTool.score + scores.lose.score
+            if (yourTool.kills.includes(enemy)) return res + yourTool.score + scores.win.score
+            return res + yourTool.score + scores.draw.score
+        }, 0)
 }
 
-const part_two = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const score = content
-            .split(split)
-            .reduce((res, curr) => {
-                const [enemy, you] = curr.split(' ')
+const part_two = async () => {
+    return (await readFile('./input.txt'))
+        .split(split)
+        .reduce((res, curr) => {
+            const [enemy, you] = curr.split(' ')
 
-                const yourOutcome = Object.values(scores).find(score => score.char.includes(you))
-                const yourTool = Object.values(moves).find(tool => {
-                    if (yourOutcome.score === 6) return tool.kills.includes(enemy)
-                    if (yourOutcome.score === 3) return tool.chars.includes(enemy)
-                    return tool.dies.includes(enemy)
-                })
+            const yourOutcome = Object.values(scores).find(score => score.char.includes(you))
+            const yourTool = Object.values(moves).find(tool => {
+                if (yourOutcome.score === 6) return tool.kills.includes(enemy)
+                if (yourOutcome.score === 3) return tool.chars.includes(enemy)
+                return tool.dies.includes(enemy)
+            })
 
-                if (yourOutcome.score === 6) return res + yourTool.score + scores.win.score
-                if (yourOutcome.score === 3) return res + yourTool.score + scores.draw.score
-                return res + yourTool.score + scores.lose.score
-            }, 0)
-
-        console.log('Part two: ', score)
-    })
+            if (yourOutcome.score === 6) return res + yourTool.score + scores.win.score
+            if (yourOutcome.score === 3) return res + yourTool.score + scores.draw.score
+            return res + yourTool.score + scores.lose.score
+        }, 0)
 }
 
-
-part_one()
-part_two()
+printResults(part_one, part_two)

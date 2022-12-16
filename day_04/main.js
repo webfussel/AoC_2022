@@ -1,6 +1,4 @@
-import {readFile} from "fs";
-
-const split = '\r\n'
+import {printResults, readFile, split} from '../utils.js'
 
 const arrayFromRange = (start, end) => {
     const arr = []
@@ -18,11 +16,9 @@ const splitSectionRanges = content => content
             .split('-')
             .map(n => +n)))
 
-const part_one = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const pairs = splitSectionRanges(content)
-
-        const contained = pairs.reduce((sumOfSames, [first, second]) => {
+const part_one = async () => {
+    return splitSectionRanges(await readFile('./input.txt'))
+        .reduce((sumOfSames, [first, second]) => {
             const firstInSecond = first[0] >= second[0] && first[1] <= second[1]
             const secondInFirst = first[0] <= second[0] && first[1] >= second[1]
             if (firstInSecond || secondInFirst) {
@@ -30,16 +26,11 @@ const part_one = () => {
             }
             return sumOfSames
         }, 0)
-
-        console.log('Part one: ', contained)
-    })
 }
 
-const part_two = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        const pairs = splitSectionRanges(content)
-
-        const overlaps = pairs.reduce((sumOfOverlaps, [first, second]) => {
+const part_two = async () => {
+    return splitSectionRanges(await readFile('./input.txt'))
+        .reduce((sumOfOverlaps, [first, second]) => {
             const firstRange = arrayFromRange(first[0], first[1])
             const secondRange = arrayFromRange(second[0], second[1])
             const [short, long] = firstRange.length < secondRange.length
@@ -52,10 +43,6 @@ const part_two = () => {
 
             return sumOfOverlaps
         }, 0)
-
-        console.log('Part two: ', overlaps)
-    })
 }
 
-part_one()
-part_two()
+printResults(part_one, part_two)

@@ -1,28 +1,26 @@
-import {readFile} from "fs";
+import {printResults, readFile} from "../utils.js";
 
-const check = (part, size) => {
-    readFile('./input.txt', 'utf-8', (_, BenThe1) => {
-        const count = size - 1
-        let res = 0
-        for (let i = count; i < BenThe1.length; i++) {
-            const set = BenThe1.substring(i - count, i + 1)
+const check = async (size) => {
+    const BenThe1 = await readFile('./input.txt')
+    const count = size - 1
+    let res = 0
+    for (let i = count; i < BenThe1.length; i++) {
+        const set = BenThe1.substring(i - count, i + 1)
 
-            if (new Set(set).size === size) {
-                res = i + 1
-                break
-            }
+        if (new Set(set).size === size) {
+            res = i + 1
+            break
         }
-        console.log(`Part ${part}: `, res)
-    })
+    }
+    return res
 }
 
-const part_one = () => {
-    check(1, 4)
+const part_one = async () => {
+    return await check(4)
 }
 
-const part_two = () => {
-    check(1, 14)
+const part_two = async () => {
+    return await check(14)
 }
 
-part_one()
-part_two()
+printResults(part_one, part_two)
