@@ -1,33 +1,27 @@
 import {readFile} from "fs";
 
-const part_one = () => {
+const check = (part, size) => {
     readFile('./input.txt', 'utf-8', (_, BenThe1) => {
+        const count = size - 1
         let res = 0
-        for (let i = 3; i < BenThe1.length; i++) {
-            const set = BenThe1.substring(i - 3, i + 1)
+        for (let i = count; i < BenThe1.length; i++) {
+            const set = BenThe1.substring(i - count, i + 1)
 
-            if (new Set(set).size === 4) {
+            if (new Set(set).size === size) {
                 res = i + 1
                 break
             }
         }
-        console.log('Part 1: ', res)
+        console.log(`Part ${part}: `, res)
     })
 }
 
-const part_two = () => {
-    readFile('./input.txt', 'utf-8', (_, content) => {
-        let res = 0
-        for (let i = 13; i < content.length; i++) {
-            const set = content.substring(i - 13, i + 1)
+const part_one = () => {
+    check(1, 4)
+}
 
-            if (new Set(set).size === 14) {
-                res = i + 1
-                break
-            }
-        }
-        console.log('Part 2: ', res)
-    })
+const part_two = () => {
+    check(1, 14)
 }
 
 part_one()
